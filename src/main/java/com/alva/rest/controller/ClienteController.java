@@ -3,9 +3,17 @@ package com.alva.rest.controller;
 import com.alva.domain.dto.DTOCliente;
 import com.alva.domain.services.ClienteService;
 import com.alva.util.RaResponseService;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import org.apache.catalina.filters.ExpiresFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+//import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -54,6 +62,17 @@ public class ClienteController {
     @GetMapping ("/listarTabla")
     public RaResponseService<List<DTOCliente>> listarTabla(){
         return clienteService.listarCliente();
+    }
+
+
+
+    @PostMapping("/descargarpdfPago")
+    public void descargarpdfPago(@RequestBody DTOCliente dtoCliente, ExpiresFilter.XHttpServletResponse response)
+            throws IOException, JRException, SQLException {
+        response.setContentType("application/x-download");
+        response.setHeader("Content-Disposition", "attachment; filename=\"OrdenPagoObligado.pdf\"");
+        OutputStream out = response.getOutputStream();
+        JasperExportManager.exportReportToPdfStream(clienteService.generarPdf(dtoCliente), out);
     }
 
 }
