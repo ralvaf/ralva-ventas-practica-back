@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cliente")
+@CrossOrigin(origins = { "*" }, allowedHeaders = "*")
 public class ClienteController {
 
     @Autowired
